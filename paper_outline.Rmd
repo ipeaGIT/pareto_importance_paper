@@ -1,0 +1,29 @@
+# Questions
+
+- accessibility is most commonly calculated with location-based measures that only consider the travel times as the travel impedance between origins and destinations
+- considering other types of travel costs, most notably the monetary costs, is important to adequately depict accessibility inequalities, as money plays an important role when choosing which transit route to use when traveling between two points
+- the few studies that consider monetary costs when calculating accessibility tend to calculate the cost of the fastest trip between od pairs, ignoring slower, though potentially cheaper, trips
+- a few recent studies have calculated the pareto frontier of time and money to consider the optimal set of transit alternatives between od pairs, noting that including slower and cheaper routes in the analysis is important to take trade-offs between money and time into consideration when assessing accessibility levels and inequalities
+- however, no study has yet investigated and shown how ignoring these trips may skew accessibility assessment, which is a gap we try to fill with this paper
+
+# Methods
+
+- we use r5r's pareto frontier function to calculate travel time matrices
+
+- we calculate accessibility estimates from three different types of travel time matrices:
+  1. one that represents the business-as-usual scenario, in which only the fastest trip between od points are included and their monetary costs are ignored
+  2. one that also includes only the fastest trip between points, but includes their monetary costs as well
+  3. one that includes the full set of pareto-optimal trips between od pairs
+
+- we calculate accessibility estimates using a cumulative opportunities measure that simultaneously considers monetary and temporal thresholds
+  - temporal thresholds range from 1 to 90 minutes, every 1 minute (1, 2, 3, ..., 88, 89, 90)
+  - monetary thresholds range from 0 BRL to 15 BRL, every 0.10 BRL (0, 0.10, 0.20, ..., 14.80, 14.90, 15)
+
+- when analyzing the accessibility distribution per income groups, we use the 10th decile of income distribution to characterize the wealthiest population and the 1st to 4th deciles to characterize the poorest population, values taken from palma ratio
+
+# Findings
+
+- 3 figures: 
+  1. absolute thresholds accessibility heatmap (3 scenarios)
+  2. relative thresholds accessibility heatmap (only the 2 monetary-included scenarios)
+  3. relative thresholds accessibility heatmap by income (only the 2 monetary-included scenarios)
