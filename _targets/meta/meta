@@ -1,0 +1,5 @@
+name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
+.Random.seed|object|630ac09fa13d13e3|||||||||||||||
+generate_od_points|function|140e078fd7db082c|||||||||||||||
+od_points|stem|c295b8fa561cbd0e|b71c8f70fd035114|3a477832f90d3acb|499515060||t19479.8233449074s|263f997d66a97545|23732|rds|local|vector|||0.68||
+rio_grid|stem|d9ba2a1862bab740|38522c9366239ca2|ef46db3751d8e999|1126343603|data-raw/rio_grid.rds|t19479.8114814815s|3f8f14492a413754|158903|file|local|vector|||0||
