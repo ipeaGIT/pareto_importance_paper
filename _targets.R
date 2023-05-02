@@ -12,6 +12,10 @@ suppressPackageStartupMessages({
 source("R/1_calculate_matrix.R", encoding = "UTF-8")
 
 list(
+  # data targets
   tar_target(rio_grid, "data-raw/rio_grid.rds", format = "file"),
+  tar_target(rio_fare_structure, "data-raw/rio_fares.zip", format = "file"),
+  
+  # code-generated targets
   tar_target(od_points, generate_od_points(rio_grid))
 )
