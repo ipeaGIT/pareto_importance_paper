@@ -1,6 +1,16 @@
 name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
-.Random.seed|object|3fbfea9866125508|||||||||||||||
+.Random.seed|object|b4b1afd344055295|||||||||||||||
+absolute_accessibility|stem|8128a22db955700c|38b93642d280fbf4|39eca68f64bb4980|2005063304||t19480.9299652778s|3f723af0a4f06394|18627458|rds|local|vector|||102.71||
+absolute_frontier|stem|2933e1a979c6d7ac|43a15e9723eb1270|d42e321ef88e0bbf|-162147931||t19480.8561805556s|9f8931213a870dbc|3672703|rds|local|vector|||1.86||
+adjust_grid_income|function|89260a05690e8691|||||||||||||||
+adjusted_income|stem|8afc2859349e4b05|38e5eff64f6163a4|aed98d5876785c15|-163073318||t19480.8744560185s|36e2de1a28276a49|16594|rds|local|vector|||0.6||
+affordability_accessibility|stem|a1c0ba98e2d843d1|45c66eba36879d01|6ad206cf0907ebd2|-1835169538||t19480.9324305556s|ef152d5940f219c2|9188670|rds|local|vector|||74.42||
+affordability_frontier|stem|a46066b286d24b1e|72eeac847cc198a3|3d77fcffec8793c3|287987584||t19480.8760763889s|77de8afa9e31c1af|3774772|rds|local|vector|||0.74||
 build_transport_network|function|328385ec61011b97|||||||||||||||
+calculate_accessibility|function|5dc1a48f22cbbccf|||||||||||||||
+calculate_affordability_frontier|function|5001fff54803fce2|||||||||||||||
+calculate_frontier|function|40d26e2248d2ec70|||||||||||||||
+calculate_pareto_frontier|function|40d26e2248d2ec70|||||||||||||||
 generate_od_points|function|140e078fd7db082c|||||||||||||||
 gtfs_fetranspor_url|stem|65a6e9f1c9c2b14c|8928f27173de9135|ef46db3751d8e999|-1985454759|https://github.com/ipeaGIT/pareto_importance_paper/releases/download/data/gtfs_fetranspor.zip|t19480.6785317923s||0|url|local|vector|||0||
 gtfs_supervia_url|stem|f8b84ba9eb1f7676|71868f31523af104|ef46db3751d8e999|-1314782493|https://github.com/ipeaGIT/pareto_importance_paper/releases/download/data/gtfs_supervia.zip|t19480.6785388423s||0|url|local|vector|||0||
@@ -9,6 +19,6 @@ rio_fare_structure|stem|1b9529388e2880e5|f935eef39799267e|ef46db3751d8e999|15511
 rio_grid|stem|d9ba2a1862bab740|38522c9366239ca2|ef46db3751d8e999|1126343603|data-raw/rio_grid.rds|t19479.8114814815s|3f8f14492a413754|158903|file|local|vector|||0||
 rio_street_network_url|stem|4bfb2111524f69c8|457a2d7864271582|ef46db3751d8e999|2061058731|https://github.com/ipeaGIT/pareto_importance_paper/releases/download/data/rio_street_network.osm.pbf|t19480.7023435491s||0|url|local|vector|||0||
 rio_topography_url|stem|73d8cf8fb8369d8b|d568205ffd7d025c|ef46db3751d8e999|418920761|https://github.com/ipeaGIT/pareto_importance_paper/releases/download/data/rio_topography.tif|t19480.6785238186s||0|url|local|vector|||0||
-routing_dir|stem|f16e48142eb59fbd|c195607ec0fe4a08|65cf321b8d27731e|-1527317383|r5|t19480.7049652778s|fe9ebbce57d7c11f|214445327|file|local|vector|||158.61||
+routing_dir|stem|f16e48142eb59fbd|c195607ec0fe4a08|65cf321b8d27731e|-1527317383|r5|t19480.7049652778s|908ec9ea9f0a90f4|0|file|local|vector|||158.61||
 setup_routing_dir|function|714c6c0170060d62|||||||||||||||
 url|object|a6866664e509f5a9|||||||||||||||

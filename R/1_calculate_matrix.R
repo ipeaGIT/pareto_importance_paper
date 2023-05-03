@@ -58,3 +58,80 @@ build_transport_network <- function(gtfs_fetranspor_url,
   
   file.path("r5")
 }
+
+# routing_dir <- tar_read(routing_dir)
+# od_points <- tar_read(od_points)
+# rio_fare_structure <- tar_read(rio_fare_structure)
+calculate_frontier <- function(routing_dir,
+                                      od_points,
+                                      rio_fare_structure) {
+  # calculating the matrix can take a very long time and require lots of RAM and
+  # processing power, so we control whether to actually calculate it with an
+  # option
+  # if we are not calculating it, we download it from github. similarly, we have
+  # to upload the matrix to the data github release when we calculating it
+  
+  if (!getOption("CALCULATE_FRONTIER", default = FALSE)) {
+    frontier_url <- "https://github.com/ipeaGIT/pareto_importance_paper/releases/download/data/rio_pareto_frontier.rds"
+    tmpfile <- tempfile()
+    
+    httr::GET(frontier_url, httr::write_disk(tmpfile))
+    
+    frontier <- readRDS(tmpfile)
+  } else {
+    # do something
+    
+    # and remember to upload it to gh release afterwards
+  }
+  
+  frontier[]
+}
+
+# rio_grid_path <- tar_read(rio_grid)
+adjust_grid_income <- function(rio_grid_path) {
+  # the income data in our grid comes from 2010 census, whereas the transit
+  # fares we use to calculate the cost of each trip are relative to the 2019
+  # transit network. therefore, we adjust the income based on brazilian
+  # inflation. to do this, we download a data series that shows how prices
+  # historically evolved when adjusted by the ipca index
+  
+  response <- httr::GET(
+    "http://ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='PRECOS12_IPCA12')"
+  )
+  response <- httr::content(response)$value
+  
+  values <- data.table::rbindlist(response)
+  values[, setdiff(names(values), c("VALDATA", "VALVALOR")) := NULL]
+  values[, VALDATA := as.Date(VALDATA)]
+  
+  value_2010 <- values[VALDATA == as.Date("2010-10-01")]$VALVALOR
+  value_2019 <- values[VALDATA == as.Date("2019-10-01")]$VALVALOR
+  
+  adjustment_rate <- value_2019 / value_2010
+  
+  grid <- readRDS(rio_grid_path)
+  grid[, income_per_capita := income_per_capita * adjustment_rate]
+  grid[, setdiff(names(grid), c("id", "income_per_capita")) := NULL]
+  
+  grid[]
+}
+
+# absolute_frontier <- tar_read(absolute_frontier)
+# origin_income <- tar_read(adjusted_income)
+calculate_affordability_frontier <- function(absolute_frontier, origin_income) {
+  afford_frontier <- data.table::copy(absolute_frontier)
+  afford_frontier[
+    origin_income,
+    on = c(from_id = "id"),
+    income_per_capita := i.income_per_capita
+  ]
+  
+  # FIXME: fix Infs and NAs
+  afford_frontier[
+    ,
+    relative_monthly_cost := monetary_cost * 44 / income_per_capita
+  ]
+  afford_frontier[, c("monetary_cost", "income_per_capita") := NULL]
+  
+  afford_frontier[]
+}

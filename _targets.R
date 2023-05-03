@@ -2,7 +2,8 @@ options(
   java.parameters = "-Xmx50G",
   N_CORES = 30L,
   SHOW_R5R_PROGRESS = TRUE,
-  VERBOSE_R5R = FALSE
+  VERBOSE_R5R = FALSE,
+  CALCULATE_FRONTIER = FALSE
 )
 
 suppressPackageStartupMessages({
@@ -11,6 +12,7 @@ suppressPackageStartupMessages({
 })
 
 source("R/1_calculate_matrix.R", encoding = "UTF-8")
+source("R/2_calculate_accessibility.R", encoding = "UTF-8")
 
 list(
   # data targets
@@ -48,5 +50,27 @@ list(
       rio_topography_url
     ),
     format = "file"
+  ),
+  tar_target(
+    absolute_frontier,
+    calculate_frontier(routing_dir, od_points, rio_fare_structure)
+  ),
+  tar_target(adjusted_income, adjust_grid_income(rio_grid)),
+  tar_target(
+    affordability_frontier,
+    calculate_affordability_frontier(absolute_frontier, adjusted_income)
+  ),
+  tar_target(
+    absolute_accessibility,
+    calculate_accessibility(absolute_frontier, rio_grid, od_points, "absolute")
+  ),
+  tar_target(
+    affordability_accessibility,
+    calculate_accessibility(
+      affordability_frontier,
+      rio_grid,
+      od_points,
+      "affordability"
+    )
   )
 )
