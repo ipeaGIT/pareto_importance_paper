@@ -85,5 +85,13 @@ list(
   tar_target(
     absolute_heatmap,
     create_absolute_heatmap(absolute_accessibility, rio_grid)
+  ),
+  tar_target(
+    affordability_heatmap,
+    create_affordability_heatmap(affordability_accessibility, rio_grid)
+  ),
+  tar_target(
+    affordability_per_group_heatmap,
+    create_afford_per_group_heatmap(affordability_accessibility, rio_grid)
   )
 )
