@@ -116,22 +116,50 @@ adjust_grid_income <- function(rio_grid_path) {
   grid[]
 }
 
-# absolute_frontier <- tar_read(absolute_frontier)
+# absolute_frontier <- tar_read(frontier)
 # origin_income <- tar_read(adjusted_income)
 calculate_affordability_frontier <- function(absolute_frontier, origin_income) {
-  afford_frontier <- data.table::copy(absolute_frontier)
+  afford_frontier <- absolute_frontier[order(from_id, to_id, travel_time)]
   afford_frontier[
     origin_income,
     on = c(from_id = "id"),
     income_per_capita := i.income_per_capita
   ]
   
-  # FIXME: fix Infs and NAs
   afford_frontier[
     ,
     relative_monthly_cost := monetary_cost * 44 / income_per_capita
   ]
-  afford_frontier[, c("monetary_cost", "income_per_capita") := NULL]
+  afford_frontier[is.nan(relative_monthly_cost), relative_monthly_cost := 0]
+  afford_frontier[, income_per_capita := NULL]
   
-  afford_frontier[]
+  # we also bind to this frontier the matrices representing the business as
+  # usual cases, in which only the fastest trip between points is present in the
+  # matrices (one case with their costs in the matrix, the other with all trips
+  # being free, representing the scenario where monetary costs are overlooked)
+  
+  fastest_matrix <- afford_frontier[order(from_id, to_id, travel_time)]
+  fastest_matrix <- fastest_matrix[
+    fastest_matrix[, .I[1], by = .(from_id, to_id)]$V1
+  ]
+  
+  fastest_free_matrix <- data.table::copy(fastest_matrix)
+  fastest_free_matrix[, c("monetary_cost", "relative_monthly_cost") := 0]
+  
+  merged_frontiers <- rbind(
+    afford_frontier,
+    fastest_matrix,
+    fastest_free_matrix,
+    idcol = "method"
+  )
+  merged_frontiers[
+    ,
+    method := factor(
+      method,
+      levels = 1:3,
+      labels = c("pareto_frontier", "fastest_cost", "free_fastest")
+    )
+  ]
+  
+  merged_frontiers[]
 }

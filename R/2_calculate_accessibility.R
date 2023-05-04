@@ -1,4 +1,4 @@
-# frontier <- tar_read(absolute_frontier)
+# frontier <- tar_read(frontier_with_afford)
 # grid_path <- tar_read(rio_grid)
 # od_points <- tar_read(od_points)
 # type <- "absolute"
@@ -23,26 +23,33 @@ calculate_accessibility <- function(frontier,
     "monetary_cost"
   )
   
-  future::plan(future::multisession, workers = getOption("N_CORES") / 3)
+  future::plan(future::multisession, workers = getOption("N_CORES") / 2)
   
   accessibility <- furrr::future_pmap(
     iterator,
     function(tt, mc) {
       loadNamespace("data.table")
       sum_opp <- frontier[travel_time <= tt][get(monetary_column) <= mc]
-      sum_opp <- sum_opp[sum_opp[, .I[1], by = .(from_id, to_id)]$V1]
-      sum_opp <- sum_opp[, .(sum_opp = sum(dest_jobs)), keyby = from_id]
+      sum_opp <- sum_opp[sum_opp[, .I[1], by = .(method, from_id, to_id)]$V1]
+      sum_opp <- sum_opp[
+        ,
+        .(sum_opp = sum(dest_jobs)),
+        keyby = .(method, from_id)
+      ]
       
-      origins_without_access <- setdiff(od_points$id, sum_opp$from_id)
-      zero_access <- data.table::data.table(
-        from_id = origins_without_access,
-        sum_opp = rep(0, length(origins_without_access))
+      access <- data.table::data.table(
+        method = rep(
+          factor(c("pareto_frontier", "fastest_cost", "free_fastest")),
+          length(od_points$id)
+        ),
+        from_id = rep(od_points$id, each = 3)
       )
-      
-      access <- rbind(sum_opp, zero_access)
-      data.table::setnames(access, new = c("id", "access"))
-      
+      access[sum_opp, on = c("method", "from_id"), access := i.sum_opp]
+      access[is.na(access), access := 0]
       access[, `:=`(travel_time = tt, monetary_limit = mc)]
+
+      data.table::setnames(access, old = c("from_id"), new = c("id"))
+      
       access
     }
   )
@@ -50,6 +57,14 @@ calculate_accessibility <- function(frontier,
   future::plan(future::sequential)
   
   accessibility <- data.table::rbindlist(accessibility)
+  accessibility <- accessibility[order(method, id)]
+  accessibility[
+    ,
+    method := factor(
+      method,
+      levels = c("free_fastest", "fastest_cost", "pareto_frontier")
+    )
+  ]
   data.table::setnames(accessibility, old = "monetary_limit", type)
   
   accessibility[]
