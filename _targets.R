@@ -3,7 +3,7 @@ options(
   N_CORES = 30L,
   SHOW_R5R_PROGRESS = TRUE,
   VERBOSE_R5R = FALSE,
-  CALCULATE_FRONTIER = FALSE
+  CALCULATE_FRONTIER = TRUE
 )
 
 suppressPackageStartupMessages({

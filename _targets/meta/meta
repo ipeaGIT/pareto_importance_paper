@@ -1,5 +1,5 @@
 name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
-.Random.seed|object|0b1654ddb9fd41cb|||||||||||||||
+.Random.seed|object|642d9ea8ab23dced|||||||||||||||
 absolute_accessibility|stem|7d317833e33443fc|93a45016a9fd82b6|a4348a92e34a7337|2005063304||t19481.5891666667s|83f4a4c990ce5379|8683397|rds|local|vector|||229.64||
 absolute_heatmap|stem|c73a99e6c5828f25|b440f2f4f391b4dc|a551d28b067f2173|833495028||t19482.6092013889s|d154355a11825ade|1565288|rds|local|vector|||20.86||
 adjust_grid_income|function|89260a05690e8691|||||||||||||||
@@ -10,14 +10,15 @@ affordability_per_group_heatmap|stem|986e3035917a5011|fda26e50682d8be5|df01b1be0
 build_transport_network|function|328385ec61011b97|||||||||||||||
 calculate_accessibility|function|4b85db15221c5087|||||||||||||||
 calculate_affordability_frontier|function|98b2886ac8204903|||||||||||||||
-calculate_frontier|function|40d26e2248d2ec70|||||||||||||||
+calculate_frontier|function|e9ebf1403181b93d|||||||||||||||
 calculate_pareto_frontier|function|40d26e2248d2ec70|||||||||||||||
 create_absolute_heatmap|function|0a15e7d4a1fe2473|||||||||||||||
 create_afford_per_group_heatmap|function|beb3bf3b135ee2ce|||||||||||||||
 create_affordability_heatmap|function|bc1de26f74cc24c4|||||||||||||||
-frontier|stem|2933e1a979c6d7ac|43a15e9723eb1270|d42e321ef88e0bbf|-59118061||t19481.5170833333s|9f8931213a870dbc|3672703|rds|local|vector|||1.88||
+frontier|stem|0558b76ef1263bbb|43a15e9723eb1270|47996529ef600efe|-59118061||t19503.8573958333s|b9dc1c022476658b|299|rds|local|vector|||24.97||
 frontier_with_afford|stem|323d240d829a67e4|348c4d9dc434347b|f7c5771e6931f9b5|343420153||t19481.5171759259s|01bdd3114f3fe5fd|6090945|rds|local|vector|||2.23||
 generate_od_points|function|140e078fd7db082c|||||||||||||||
+generate_possible_fare_values|function|84d163ea2295b17e|||||||||||||||
 gtfs_fetranspor_url|stem|65a6e9f1c9c2b14c|8928f27173de9135|ef46db3751d8e999|-1985454759|https://github.com/ipeaGIT/pareto_importance_paper/releases/download/data/gtfs_fetranspor.zip|t19480.6785317923s||0|url|local|vector|||0||
 gtfs_supervia_url|stem|f8b84ba9eb1f7676|71868f31523af104|ef46db3751d8e999|-1314782493|https://github.com/ipeaGIT/pareto_importance_paper/releases/download/data/gtfs_supervia.zip|t19480.6785388423s||0|url|local|vector|||0||
 od_points|stem|c295b8fa561cbd0e|b71c8f70fd035114|3a477832f90d3acb|499515060||t19479.8233449074s|263f997d66a97545|23732|rds|local|vector|||0.68||
