@@ -83,6 +83,10 @@ list(
   
   # analysis targets ----
   tar_target(
+    absolute_map,
+    create_absolute_map(absolute_accessibility, rio_grid)
+  ),
+  tar_target(
     absolute_heatmap,
     create_absolute_heatmap(absolute_accessibility, rio_grid)
   ),

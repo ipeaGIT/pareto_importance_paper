@@ -1,5 +1,35 @@
 # access <- tar_read(absolute_accessibility)
 # grid_path <- tar_read(rio_grid)
+create_absolute_map <- function(access, grid_path) {
+  grid <- readRDS(grid_path)
+  
+  access <- access[travel_time == 60]
+  access <- access[absolute %in% c(5, 10, 15)]
+  
+  access[grid, on = "id", geometry := i.geometry]
+  
+  # remove grid object to reduce plot object size
+  rm(grid)
+  
+  p <- ggplot(sf::st_sf(access)) +
+    geom_sf(aes(fill = access), color = NA) +
+    facet_grid(absolute ~ method) +
+    scale_fill_viridis_c(
+      name = "Average\naccessibility",
+      labels = scales::label_number(scale = 1 / 1000, suffix = "k"),
+      option = "inferno"
+    ) +
+    theme_minimal() +
+    theme(
+      axis.text = element_blank(),
+      panel.grid = element_blank()
+    )
+
+  p
+}
+
+# access <- tar_read(absolute_accessibility)
+# grid_path <- tar_read(rio_grid)
 create_absolute_heatmap <- function(access, grid_path) {
   grid <- readRDS(grid_path)
   
