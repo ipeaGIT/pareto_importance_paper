@@ -86,16 +86,68 @@ list(
     absolute_map,
     create_absolute_map(absolute_accessibility, rio_grid)
   ),
+  tar_target(heatmap_theme, create_heatmap_theme()),
   tar_target(
     absolute_heatmap,
-    create_absolute_heatmap(absolute_accessibility, rio_grid)
+    create_absolute_heatmap(absolute_accessibility, rio_grid, heatmap_theme)
   ),
   tar_target(
     affordability_heatmap,
-    create_affordability_heatmap(affordability_accessibility, rio_grid)
+    create_affordability_heatmap(
+      affordability_accessibility,
+      rio_grid,
+      heatmap_theme
+    )
   ),
   tar_target(
     affordability_per_group_heatmap,
-    create_afford_per_group_heatmap(affordability_accessibility, rio_grid)
+    create_afford_per_group_heatmap(
+      affordability_accessibility,
+      rio_grid,
+      heatmap_theme
+    )
+  ),
+  
+  # chart-saving targets ----
+  tar_target(
+    figures_dir,
+    {
+      dir <- "figures"
+      dir.create(dir)
+      dir
+    }
+  ),
+  tar_target(
+    paper_absolute_heatmap,
+    ggsave(
+      file.path(figures_dir, "paper_absolute_heatmap.png"),
+      plot = absolute_heatmap,
+      units = "cm",
+      width = 24,
+      height = 18
+    ),
+    format = "file"
+  ),
+  tar_target(
+    paper_affordability_heatmap,
+    ggsave(
+      file.path(figures_dir, "paper_affordability_heatmap.png"),
+      plot = affordability_heatmap,
+      units = "cm",
+      width = 24,
+      height = 18
+    ),
+    format = "file"
+  ),
+  tar_target(
+    paper_affordability_per_group_heatmap,
+    ggsave(
+      file.path(figures_dir, "paper_affordability_per_group_heatmap.png"),
+      plot = affordability_per_group_heatmap,
+      units = "cm",
+      width = 24,
+      height = 25 
+    ),
+    format = "file"
   )
 )

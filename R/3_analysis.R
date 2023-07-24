@@ -1,3 +1,12 @@
+create_heatmap_theme <- function() {
+  theme_minimal() +
+    theme(
+      panel.grid = element_blank(),
+      legend.position = "right",
+      strip.text = element_text(size = 11)
+    )
+}
+
 # access <- tar_read(absolute_accessibility)
 # grid_path <- tar_read(rio_grid)
 create_absolute_map <- function(access, grid_path) {
@@ -30,7 +39,8 @@ create_absolute_map <- function(access, grid_path) {
 
 # access <- tar_read(absolute_accessibility)
 # grid_path <- tar_read(rio_grid)
-create_absolute_heatmap <- function(access, grid_path) {
+# heatmap_theme <- tar_read(heatmap_theme)
+create_absolute_heatmap <- function(access, grid_path, heatmap_theme) {
   grid <- readRDS(grid_path)
   
   access[grid, on = "id", population := i.population]
@@ -46,9 +56,16 @@ create_absolute_heatmap <- function(access, grid_path) {
   make_row <- function(to_compare = c("free_fastest", "fastest_cost")) {
     access_dist <- access[method %in% c(to_compare, "pareto_frontier")]
     
+    panels_titles <- c(
+      free_fastest = "Travel matrix without\nmonetary costs",
+      fastest_cost = "Monetary cost of\nfastest trip only",
+      pareto_frontier = "Pareto frontier of\ntime and money",
+      difference = "\nDifference"
+    )
+    
     distribution <- ggplot(access_dist) + 
       geom_tile(aes(travel_time, cost_cutoff, fill = avg_access)) +
-      facet_wrap(~ method) +
+      facet_wrap(~ method, labeller = as_labeller(panels_titles)) +
       scale_fill_viridis_c(
         name = "Average\naccessibility\n",
         labels = scales::label_number(scale = 1 / 1000, suffix = "k")
@@ -61,8 +78,7 @@ create_absolute_heatmap <- function(access, grid_path) {
         name = "Absolute monetary cost threshold (BRL)",
         breaks = c(0, 5, 10, 15)
       ) +
-      theme_minimal() +
-      theme(panel.grid = element_blank(), legend.position = "right")
+      heatmap_theme 
     
     access_diff <- data.table::dcast(
       access_dist,
@@ -79,7 +95,7 @@ create_absolute_heatmap <- function(access, grid_path) {
     
     difference <- ggplot(access_diff) + 
       geom_tile(aes(travel_time, cost_cutoff, fill = diff)) +
-      facet_wrap(~ method) +
+      facet_wrap(~ method, labeller = as_labeller(panels_titles)) +
       scale_fill_viridis_c(
         name = "Accessibility\ndifference\n(% of original)",
         labels = scales::label_percent(),
@@ -94,12 +110,8 @@ create_absolute_heatmap <- function(access, grid_path) {
         name = "Absolute monetary cost threshold (BRL)",
         breaks = c(0, 5, 10, 15)
       ) +
-      theme_minimal() +
-      theme(
-        panel.grid = element_blank(),
-        legend.position = "right",
-        axis.title.y = element_blank()
-      )
+      heatmap_theme +
+      theme(axis.title.y = element_blank())
     
     # remove access_diff object to reduce plot object size
     rm(access_diff)
@@ -108,7 +120,7 @@ create_absolute_heatmap <- function(access, grid_path) {
       distribution,
       difference,
       nrow = 1,
-      rel_widths = c(2, 1)
+      rel_widths = c(1.6, 1)
     )
     
     row
@@ -124,7 +136,8 @@ create_absolute_heatmap <- function(access, grid_path) {
 
 # access <- tar_read(affordability_accessibility)
 # grid_path <- tar_read(rio_grid)
-create_affordability_heatmap <- function(access, grid_path) {
+# heatmap_theme <- tar_read(heatmap_theme)
+create_affordability_heatmap <- function(access, grid_path, heatmap_theme) {
   grid <- readRDS(grid_path)
   
   access[grid, on = "id", population := i.population]
@@ -140,9 +153,16 @@ create_affordability_heatmap <- function(access, grid_path) {
   make_row <- function(to_compare = c("free_fastest", "fastest_cost")) {
     access_dist <- access[method %in% c(to_compare, "pareto_frontier")]
     
+    panels_titles <- c(
+      free_fastest = "Travel matrix without\nmonetary costs",
+      fastest_cost = "Monetary cost of\nfastest trip only",
+      pareto_frontier = "Pareto frontier of\ntime and money",
+      difference = "\nDifference"
+    )
+    
     distribution <- ggplot(access_dist) + 
       geom_tile(aes(travel_time, cost_cutoff, fill = avg_access)) +
-      facet_wrap(~ method) +
+      facet_wrap(~ method, labeller = as_labeller(panels_titles)) +
       scale_fill_viridis_c(
         name = "Average\naccessibility\n",
         labels = scales::label_number(scale = 1 / 1000, suffix = "k")
@@ -156,8 +176,7 @@ create_affordability_heatmap <- function(access, grid_path) {
         breaks = c(0, 0.1, 0.2, 0.3, 0.4),
         labels = scales::label_percent()
       ) +
-      theme_minimal() +
-      theme(panel.grid = element_blank(), legend.position = "right")
+      heatmap_theme
     
     access_diff <- data.table::dcast(
       access_dist,
@@ -174,7 +193,7 @@ create_affordability_heatmap <- function(access, grid_path) {
     
     difference <- ggplot(access_diff) + 
       geom_tile(aes(travel_time, cost_cutoff, fill = diff)) +
-      facet_wrap(~ method) +
+      facet_wrap(~ method, labeller = as_labeller(panels_titles)) +
       scale_fill_viridis_c(
         name = "Accessibility\ndifference\n(% of original)",
         labels = scales::label_percent(),
@@ -190,12 +209,8 @@ create_affordability_heatmap <- function(access, grid_path) {
         breaks = c(0, 0.1, 0.2, 0.3, 0.4),
         labels = scales::label_percent()
       ) +
-      theme_minimal() +
-      theme(
-        panel.grid = element_blank(),
-        legend.position = "right",
-        axis.title.y = element_blank()
-      )
+      heatmap_theme +
+      theme(axis.title.y = element_blank())
     
     # remove access_diff object to reduce plot object size
     rm(access_diff)
@@ -204,7 +219,7 @@ create_affordability_heatmap <- function(access, grid_path) {
       distribution,
       difference,
       nrow = 1,
-      rel_widths = c(2, 1)
+      rel_widths = c(1.6, 1)
     )
     
     row
@@ -220,7 +235,8 @@ create_affordability_heatmap <- function(access, grid_path) {
 
 # access <- tar_read(affordability_accessibility)
 # grid_path <- tar_read(rio_grid)
-create_afford_per_group_heatmap <- function(access, grid_path) {
+# heatmap_theme <- tar_read(heatmap_theme)
+create_afford_per_group_heatmap <- function(access, grid_path, heatmap_theme) {
   grid <- readRDS(grid_path)
   
   access[grid, on = "id", `:=`(population = i.population, decile = i.decile)]
@@ -240,9 +256,18 @@ create_afford_per_group_heatmap <- function(access, grid_path) {
   make_row <- function(to_compare = c("free_fastest", "fastest_cost")) {
     access_dist <- access[method %in% c(to_compare, "pareto_frontier")]
     
+    panels_titles <- c(
+      free_fastest = "Travel matrix without\nmonetary costs",
+      fastest_cost = "Monetary cost of\nfastest trip only",
+      pareto_frontier = "Pareto frontier of\ntime and money",
+      richest_10 = "Wealthiest 10%",
+      poorest_40 = "Poorest 40%",
+      difference = "\nDifference"
+    )
+    
     distribution <- ggplot(access_dist) + 
       geom_tile(aes(travel_time, cost_cutoff, fill = avg_access)) +
-      facet_grid(group ~ method) +
+      facet_grid(group ~ method, labeller = as_labeller(panels_titles)) +
       scale_fill_viridis_c(
         name = "Average\naccessibility\n",
         labels = scales::label_number(scale = 1 / 1000, suffix = "k")
@@ -256,8 +281,7 @@ create_afford_per_group_heatmap <- function(access, grid_path) {
         breaks = c(0, 0.1, 0.2, 0.3, 0.4),
         labels = scales::label_percent()
       ) +
-      theme_minimal() +
-      theme(panel.grid = element_blank(), legend.position = "right")
+      heatmap_theme
     
     access_diff <- data.table::dcast(
       access_dist,
@@ -274,7 +298,7 @@ create_afford_per_group_heatmap <- function(access, grid_path) {
     
     difference <- ggplot(access_diff) + 
       geom_tile(aes(travel_time, cost_cutoff, fill = diff)) +
-      facet_grid(group ~ method) +
+      facet_grid(group ~ method, labeller = as_labeller(panels_titles)) +
       scale_fill_viridis_c(
         name = "Accessibility\ndifference\n(% of original)",
         labels = scales::label_percent(),
@@ -290,12 +314,8 @@ create_afford_per_group_heatmap <- function(access, grid_path) {
         breaks = c(0, 0.1, 0.2, 0.3, 0.4),
         labels = scales::label_percent()
       ) +
-      theme_minimal() +
-      theme(
-        panel.grid = element_blank(),
-        legend.position = "right",
-        axis.title.y = element_blank()
-      )
+      heatmap_theme +
+      theme(axis.title.y = element_blank())
     
     # remove access_diff object to reduce plot object size
     rm(access_diff)
@@ -304,7 +324,7 @@ create_afford_per_group_heatmap <- function(access, grid_path) {
       distribution,
       difference,
       nrow = 1,
-      rel_widths = c(2, 1)
+      rel_widths = c(1.6, 1)
     )
     
     row
