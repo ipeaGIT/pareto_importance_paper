@@ -20,9 +20,18 @@ create_absolute_map <- function(access, grid_path) {
   # remove grid object to reduce plot object size
   rm(grid)
   
+  panels_titles <- c(
+    free_fastest = "Travel matrix without\nmonetary costs",
+    fastest_cost = "Monetary cost of\nfastest trip only",
+    pareto_frontier = "Pareto frontier of\ntime and money",
+    `5` = "5 BRL",
+    `10` = "10 BRL",
+    `15` = "15 BRL"
+  )
+  
   p <- ggplot(sf::st_sf(access)) +
     geom_sf(aes(fill = access), color = NA) +
-    facet_grid(absolute ~ method) +
+    facet_grid(absolute ~ method, labeller = as_labeller(panels_titles)) +
     scale_fill_viridis_c(
       name = "Average\naccessibility",
       labels = scales::label_number(scale = 1 / 1000, suffix = "k"),
@@ -31,7 +40,9 @@ create_absolute_map <- function(access, grid_path) {
     theme_minimal() +
     theme(
       axis.text = element_blank(),
-      panel.grid = element_blank()
+      panel.grid = element_blank(),
+      legend.position = "bottom",
+      strip.text = element_text(size = 11)
     )
 
   p
@@ -334,6 +345,117 @@ create_afford_per_group_heatmap <- function(access, grid_path, heatmap_theme) {
   second_row <- make_row("fastest_cost")
   
   p <- cowplot::plot_grid(first_row, second_row, nrow = 2)
+  
+  p
+}
+
+# frontier <- tar_read(frontier_with_afford)
+# routing_dir <- tar_read(routing_dir)
+# od_points <- tar_read(od_points)
+create_frontier_plot <- function(frontier, routing_dir, od_points) {
+  pareto_frontier <- frontier[method == "pareto_frontier"]
+  pareto_frontier[
+    ,
+    time_gap := max(travel_time) - min(travel_time),
+    by = .(from_id, to_id)
+  ]
+  
+  n_transfers <- pareto_frontier[
+    ,
+    .(.N, time_gap = time_gap[1], min_travel_time = min(travel_time)),
+    by = .(from_id, to_id)
+  ]
+  
+  # choosing N = 7 because seems to fill the plot well. want a reasonably large
+  # time gap as well, with a min travel time not too high
+  
+  seven_rides <- n_transfers[N == 7]
+  
+  chosen_pair <- seven_rides[time_gap == 37 & min_travel_time == 58]
+  
+  chosen_frontier <- pareto_frontier[
+    from_id == chosen_pair$from_id & to_id == chosen_pair$to_id
+  ]
+  
+  cols_to_remove <- setdiff(
+    names(chosen_frontier),
+    c("from_id", "to_id", "travel_time", "monetary_cost")
+  )
+  chosen_frontier[, (cols_to_remove) := NULL]
+  
+  # calculating the walking trip between the chosen pair, as it is not included
+  # in the frontier (wouldn't satisfy the max_walk_time = 30)
+  
+  r5r_core <- r5r::setup_r5(routing_dir)
+  
+  walking_trip <- r5r::travel_time_matrix(
+    r5r_core,
+    origins = od_points[id == chosen_pair$from_id],
+    destinations = od_points[id == chosen_pair$to_id],
+    mode = "WALK",
+    departure_datetime = as.POSIXct(
+      "08-01-2020 07:00:00",
+      format = "%d-%m-%Y %H:%M:%S"
+    ),
+    time_window = 60,
+    max_trip_duration = 240,
+    walk_speed = 3.6,
+    n_threads = 1,
+    verbose = FALSE,
+    progress = FALSE
+  )
+  walking_trip[, monetary_cost := 0]
+  data.table::setnames(walking_trip, "travel_time_p50", "travel_time")
+  
+  # bind walking trip and itineraries information to chosen_frontier to create
+  # the dataset used in the plot
+  
+  chosen_frontier <- rbind(chosen_frontier, walking_trip)
+  
+  chosen_frontier$itinerary <- c(
+    "Bus \U2192 Subway \U2192 Bus",
+    "BRT \U2192 Rail \U2192 Bus",
+    "BRT \U2192 Subway \U2192 Bus",
+    "Subway \U2192 Bus",
+    "BRT \U2192 Rail",
+    "BRT \U2192 Bus \U2192 Bus",
+    "Bus \U2192 Bus",
+    "Walk"
+  )
+  
+  # remove objects to reduce plot object size
+  rm(chosen_pair, frontier, n_transfers, od_points, pareto_frontier, r5r_core,
+     seven_rides, walking_trip)
+  
+  p <- ggplot(chosen_frontier) +
+    geom_step(aes(x = monetary_cost, y = travel_time), linetype = "longdash") +
+    geom_point(aes(x = monetary_cost, y = travel_time)) +
+    geom_segment(
+      aes(x = 13.1, y = 58, xend = 16, yend = 58),
+      linetype = "longdash"
+    ) +
+    geom_text(
+      aes(x = monetary_cost, y = travel_time, label = itinerary),
+      hjust = 0,
+      angle = 45,
+      nudge_x = 0.1,
+      nudge_y = 5,
+      size = 3
+    ) +
+    scale_y_continuous(
+      name = "Total travel time (minutes)",
+      limits = c(0, 250),
+      expand = c(0, 0),
+      breaks = c(0, 40, 80, 120, 160, 200, 240)
+    ) +
+    scale_x_continuous(
+      name = "Total fare (BRL)",
+      limits = c(0, 16),
+      expand = c(0, 0),
+      breaks = c(0, 5, 10, 15)
+    ) +
+    theme_minimal() +
+    theme(panel.grid = element_blank(), axis.line = element_line())
   
   p
 }

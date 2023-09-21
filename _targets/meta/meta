@@ -1,8 +1,8 @@
 name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
-.Random.seed|object|ed2ebfb2c310b883|||||||||||||||
+.Random.seed|object|36ec9a3273320df6|||||||||||||||
 absolute_accessibility|stem|374e1b7ec80ea865|93a45016a9fd82b6|dd2a2a0437fcfc65|2005063304||t19506.5569675926s|60ab5a6cd716bd6f|8683947|rds|local|vector|||228.7||
 absolute_heatmap|stem|0a39b73571e4addf|f1f8a18e6133367b|f32e6dca9a62d808|833495028||t19562.8745486111s|8e97fc300e5afc3f|1566254|rds|local|vector|||19.2||
-absolute_map|stem|5b4db81fdfa63104|8624edd6d7f285ad|dcd17a6a91735083|177493921||t19562.6431712963s|60192829201ea2b8|988899|rds|local|vector|||2.54||
+absolute_map|stem|a7f067d31c2d80d3|8624edd6d7f285ad|2e2e961d5267a9ef|177493921||t19563.6062268519s|f4f36360183c5860|990366|rds|local|vector|||2.48||
 adjust_grid_income|function|89260a05690e8691|||||||||||||||
 adjusted_income|stem|8afc2859349e4b05|38e5eff64f6163a4|aed98d5876785c15|-163073318||t19480.8744560185s|36e2de1a28276a49|16594|rds|local|vector|||0.6||
 affordability_accessibility|stem|037023e27f762894|a7b9c673c880da2e|dd2a2a0437fcfc65|-1835169538||t19506.55875s|530f1a59321b4bd2|5269206|rds|local|vector|||143.75||
@@ -14,9 +14,10 @@ calculate_affordability_frontier|function|98b2886ac8204903|||||||||||||||
 calculate_frontier|function|67d3b39394b3f7c9|||||||||||||||
 calculate_pareto_frontier|function|40d26e2248d2ec70|||||||||||||||
 create_absolute_heatmap|function|3f6195e6ad8ad22d|||||||||||||||
-create_absolute_map|function|9066f2a39a22cf25|||||||||||||||
+create_absolute_map|function|18196223728ea5d0|||||||||||||||
 create_afford_per_group_heatmap|function|ac179b83b33aadeb|||||||||||||||
 create_affordability_heatmap|function|be8194d644f8c203|||||||||||||||
+create_frontier_plot|function|dc1d3262977a7324|||||||||||||||
 create_heatmap_theme|function|c46ead5bad7a7233|||||||||||||||
 figures_dir|stem|77f307e00292cd96|47a23a24c5100f73|95a915186f8c41df|-844269799||t19562.8640856481s|3f0d260b00af2958|61|rds|local|vector|||0||
 frontier|stem|5865894483130a79|43a15e9723eb1270|0c64b035895a2b34|-59118061||t19504.9712962963s|9b70a8ed7b51e983|3523531|rds|local|vector|||95975.72||
@@ -28,8 +29,11 @@ gtfs_supervia_url|stem|f8b84ba9eb1f7676|71868f31523af104|ef46db3751d8e999|-13147
 heatmap_theme|stem|6ffb21ec3aa011f6|be3e07a68ca93d39|41b2e29472b1c4a3|1881693773||t19562.8557291667s|1ce9b7effb92356e|1403|rds|local|vector|||0.02||
 od_points|stem|c295b8fa561cbd0e|b71c8f70fd035114|3a477832f90d3acb|499515060||t19479.8233449074s|263f997d66a97545|23732|rds|local|vector|||0.68||
 paper_absolute_heatmap|stem|1af693b5b2fb0d8a|523fd982c3a4bc23|f82d8e03add9b6e5|97515486|figures/paper_absolute_heatmap.png|t19562.8745601852s|86205997db0e6ea9|73304|file|local|vector|||0.99||
+paper_absolute_map|stem|9cc3ba6765e41ae2|d915b99b64efdd55|54e34e3f872f4bc7|2036768823|figures/paper_absolute_map.png|t19563.6081018519s|b9d3d2bd621e67d3|293468|file|local|vector|||2.93||
 paper_affordability_heatmap|stem|26981820385f00a7|07a2c33206c4ab3a|947fd347e6c2a7ad|-1655346241|figures/paper_affordability_heatmap.png|t19562.8766550926s|1457c44c9602316c|93541|file|local|vector|||0.93||
 paper_affordability_per_group_heatmap|stem|3ef28706e81ee946|10b7b2f37095c469|cc42526ca453b065|56176530|figures/paper_affordability_per_group_heatmap.png|t19562.8766666667s|c2bb1309d7f9323f|115782|file|local|vector|||1.27||
+paper_pareto_frontier_plot|stem|326c1e53c6ae0e1b|5a871184de04d016|61dbe8487a57aefd|701364289|figures/paper_pareto_frontier_plot.png|t19621.8370168128s|357171cebd8764cc|17048|file|local|vector|||0.46||
+pareto_frontier_plot|stem|cab4d172e72ee1fb|12d57fc7d4aec90e|4de4fef82160fce1|-1963364615||t19621.837010124s|3137938db66f4478|121918|rds|local|vector|||9.79||
 rio_fare_structure|stem|1b9529388e2880e5|f935eef39799267e|ef46db3751d8e999|1551140889|data-raw/rio_fares.zip|t19425.6054050926s|f42a7b8c9be15aaa|9545|file|local|vector|||0||
 rio_grid|stem|d9ba2a1862bab740|38522c9366239ca2|ef46db3751d8e999|1126343603|data-raw/rio_grid.rds|t19479.8114814815s|3f8f14492a413754|158903|file|local|vector|||0||
 rio_street_network_url|stem|4bfb2111524f69c8|457a2d7864271582|ef46db3751d8e999|2061058731|https://github.com/ipeaGIT/pareto_importance_paper/releases/download/data/rio_street_network.osm.pbf|t19480.7023435491s||0|url|local|vector|||0||

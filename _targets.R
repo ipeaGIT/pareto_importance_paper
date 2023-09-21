@@ -107,6 +107,10 @@ list(
       heatmap_theme
     )
   ),
+  tar_target(
+    pareto_frontier_plot,
+    create_frontier_plot(frontier_with_afford, routing_dir, od_points)
+  ),
   
   # chart-saving targets ----
   tar_target(
@@ -116,6 +120,17 @@ list(
       dir.create(dir)
       dir
     }
+  ),
+  tar_target(
+    paper_absolute_map,
+    ggsave(
+      file.path(figures_dir, "paper_absolute_map.png"),
+      plot = absolute_map,
+      units = "cm",
+      width = 24,
+      height = 16
+    ),
+    format = "file"
   ),
   tar_target(
     paper_absolute_heatmap,
@@ -147,6 +162,17 @@ list(
       units = "cm",
       width = 24,
       height = 25 
+    ),
+    format = "file"
+  ),
+  tar_target(
+    paper_pareto_frontier_plot,
+    ggsave(
+      file.path(figures_dir, "paper_pareto_frontier_plot.png"),
+      plot = pareto_frontier_plot,
+      units = "cm",
+      width = 16,
+      height = 8
     ),
     format = "file"
   )
