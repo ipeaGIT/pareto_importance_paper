@@ -12,8 +12,8 @@ create_heatmap_theme <- function() {
 create_absolute_map <- function(access, grid_path) {
   grid <- readRDS(grid_path)
   
-  access <- access[travel_time == 60]
-  access <- access[absolute %in% c(5, 10, 15)]
+  access <- access[travel_time == 75]
+  access <- access[absolute == 5]
   
   access[grid, on = "id", geometry := i.geometry]
   
@@ -21,39 +21,98 @@ create_absolute_map <- function(access, grid_path) {
   rm(grid)
   
   panels_titles <- c(
-    free_fastest = "Travel matrix without\nmonetary costs",
-    fastest_cost = "Monetary cost of\nfastest trip only",
-    pareto_frontier = "Pareto frontier of\ntime and money",
-    `5` = "5 BRL",
-    `10` = "10 BRL",
-    `15` = "15 BRL"
+    free_fastest = "No-cost\nmethod (A)",
+    fastest_cost = "Fastest-trip-cost\nmethod (C)",
+    pareto_frontier = "Pareto-frontier\nmethod (B)",
+    free_fastest_diff = "Difference:\nA - B",
+    fastest_cost_diff = "Difference:\nC - B"
   )
   
-  p <- ggplot(sf::st_sf(access)) +
-    geom_sf(aes(fill = access), color = NA) +
-    facet_grid(absolute ~ method, labeller = as_labeller(panels_titles)) +
-    scale_fill_viridis_c(
-      name = "Average\naccessibility",
-      labels = scales::label_number(scale = 1 / 1000, suffix = "k"),
-      option = "inferno"
-    ) +
-    theme_minimal() +
-    theme(
-      axis.text = element_blank(),
-      panel.grid = element_blank(),
-      legend.position = "bottom",
-      strip.text = element_text(size = 11)
+  max_access <- max(access$access)
+  
+  make_row <- function(to_compare = c("free_fastest", "fastest_cost")) {
+    access_dist <- access[method %in% c(to_compare, "pareto_frontier")]
+    
+    distribution <- ggplot(sf::st_sf(access_dist)) +
+      geom_sf(aes(fill = access), color = NA) +
+      facet_wrap( ~ method, labeller = as_labeller(panels_titles)) +
+      scale_fill_viridis_c(
+        name = "Accessibility",
+        labels = scales::label_number(scale = 1 / 1000, suffix = "k"),
+        limits = c(0, max_access)
+      ) +
+      theme_minimal() +
+      theme(
+        axis.text = element_blank(),
+        panel.grid = element_blank(),
+        legend.position = "bottom",
+        strip.text = element_text(size = 11)
+      )
+    
+    access_diff <- data.table::copy(access_dist)
+    access_diff[
+      ,
+      diff := (access - data.table::shift(access, n = 1)) * -1,
+      by = id
+    ]
+    access_diff <- access_diff[!is.na(diff)]
+    access_diff[, method := paste0(to_compare, "_diff")]
+    
+    # remove access_dist object to reduce plot object size
+    rm(access_dist)
+    
+    difference <- ggplot(sf::st_sf(access_diff)) +
+      geom_sf(aes(fill = diff), color = NA) +
+      facet_wrap( ~ method, labeller = as_labeller(panels_titles)) +
+      scale_fill_viridis_c(
+        name = "Difference",
+        labels = scales::label_number(scale = 1 / 1000, suffix = "k"),
+        option = ifelse(to_compare == "free_fastest", "cividis", "inferno"),
+        direction = ifelse(to_compare == "free_fastest", 1, -1)
+      ) +
+      theme_minimal() +
+      theme(
+        axis.text = element_blank(),
+        panel.grid = element_blank(),
+        legend.position = "bottom",
+        strip.text = element_text(size = 11)
+      )
+    
+    # remove access_diff object to reduce plot object size
+    rm(access_diff)
+    
+    row <- cowplot::plot_grid(
+      distribution,
+      difference,
+      nrow = 1,
+      rel_widths = c(1.96, 1)
     )
-
+    
+    row
+  }
+  
+  first_row <- make_row("free_fastest")
+  second_row <- make_row("fastest_cost")
+  
+  p <- cowplot::plot_grid(first_row, second_row, nrow = 2)
+  
   p
 }
 
 # access <- tar_read(absolute_accessibility)
 # grid_path <- tar_read(rio_grid)
 # heatmap_theme <- tar_read(heatmap_theme)
-create_absolute_heatmap <- function(access, grid_path, heatmap_theme) {
+# to_compare <- "free_fastest"
+create_absolute_heatmap <- function(access,
+                                    grid_path,
+                                    heatmap_theme,
+                                    to_compare = c(
+                                      "free_fastest",
+                                      "fastest_cost"
+                                    )) {
   grid <- readRDS(grid_path)
   
+  access <- access[method %in% c(to_compare, "pareto_frontier")]
   access[grid, on = "id", population := i.population]
   access <- access[
     ,
@@ -64,83 +123,73 @@ create_absolute_heatmap <- function(access, grid_path, heatmap_theme) {
   # remove grid object to reduce plot object size
   rm(grid)
   
-  make_row <- function(to_compare = c("free_fastest", "fastest_cost")) {
-    access_dist <- access[method %in% c(to_compare, "pareto_frontier")]
-    
-    panels_titles <- c(
-      free_fastest = "Travel matrix without\nmonetary costs",
-      fastest_cost = "Monetary cost of\nfastest trip only",
-      pareto_frontier = "Pareto frontier of\ntime and money",
-      difference = "\nDifference"
-    )
-    
-    distribution <- ggplot(access_dist) + 
-      geom_tile(aes(travel_time, cost_cutoff, fill = avg_access)) +
-      facet_wrap(~ method, labeller = as_labeller(panels_titles)) +
-      scale_fill_viridis_c(
-        name = "Average\naccessibility\n",
-        labels = scales::label_number(scale = 1 / 1000, suffix = "k")
-      ) +
-      scale_x_continuous(
-        name = "Travel time threshold",
-        breaks = c(0, 30, 60, 90)
-      ) +
-      scale_y_continuous(
-        name = "Absolute monetary cost threshold (BRL)",
-        breaks = c(0, 5, 10, 15)
-      ) +
-      heatmap_theme 
-    
-    access_diff <- data.table::dcast(
-      access_dist,
-      travel_time + cost_cutoff ~ method,
-      value.var = "avg_access"
-    )
-    access_diff[, diff := (pareto_frontier - get(to_compare)) / get(to_compare)]
-    access_diff[is.nan(diff), diff := 0]
-    access_diff[, c(to_compare, "pareto_frontier") := NULL]
-    access_diff[, method := "difference"]
-    
-    # remove access_dist object to reduce plot object size
-    rm(access_dist)
-    
-    difference <- ggplot(access_diff) + 
-      geom_tile(aes(travel_time, cost_cutoff, fill = diff)) +
-      facet_wrap(~ method, labeller = as_labeller(panels_titles)) +
-      scale_fill_viridis_c(
-        name = "Accessibility\ndifference\n(% of original)",
-        labels = scales::label_percent(),
-        option = ifelse(to_compare == "free_fastest", "cividis", "inferno"),
-        direction = ifelse(to_compare == "free_fastest", -1, 1)
-      ) +
-      scale_x_continuous(
-        name = "Travel time threshold",
-        breaks = c(0, 30, 60, 90)
-      ) +
-      scale_y_continuous(
-        name = "Absolute monetary cost threshold (BRL)",
-        breaks = c(0, 5, 10, 15)
-      ) +
-      heatmap_theme +
-      theme(axis.title.y = element_blank())
-    
-    # remove access_diff object to reduce plot object size
-    rm(access_diff)
-    
-    row <- cowplot::plot_grid(
-      distribution,
-      difference,
-      nrow = 1,
-      rel_widths = c(1.6, 1)
-    )
-    
-    row
-  }
+  panels_titles <- c(
+    free_fastest = "No-cost\nmethod (A)",
+    fastest_cost = "Fastest-trip-cost\nmethod (A)",
+    pareto_frontier = "Pareto-frontier\nmethod (B)",
+    difference = "Difference (C)\nA - B"
+  )
   
-  first_row <- make_row("free_fastest")
-  second_row <- make_row("fastest_cost")
+  distribution <- ggplot(access) + 
+    geom_tile(aes(travel_time, cost_cutoff, fill = avg_access)) +
+    facet_wrap(~ method, labeller = as_labeller(panels_titles)) +
+    scale_fill_viridis_c(
+      name = "Average\naccessibility\n",
+      labels = scales::label_number(scale = 1 / 1000, suffix = "k")
+    ) +
+    scale_x_continuous(
+      name = "Travel time threshold",
+      breaks = c(0, 30, 60, 90)
+    ) +
+    scale_y_continuous(
+      name = "Absolute monetary cost threshold (BRL)",
+      breaks = c(0, 5, 10, 15)
+    ) +
+    heatmap_theme
   
-  p <- cowplot::plot_grid(first_row, second_row, nrow = 2)
+  access_diff <- data.table::dcast(
+    access,
+    travel_time + cost_cutoff ~ method,
+    value.var = "avg_access"
+  )
+  access_diff[, diff := (get(to_compare) - pareto_frontier) / pareto_frontier]
+  access_diff[is.nan(diff), diff := 0]
+  access_diff[, c(to_compare, "pareto_frontier") := NULL]
+  access_diff[, method := "difference"]
+  access_diff[diff > 1, diff := 1]
+  
+  # remove access_dist object to reduce plot object size
+  rm(access)
+  
+  difference <- ggplot(access_diff) + 
+    geom_tile(aes(travel_time, cost_cutoff, fill = diff)) +
+    facet_wrap(~ method, labeller = as_labeller(panels_titles)) +
+    scale_fill_viridis_c(
+      name = "Accessibility\ndifference\n(% of Pareto)",
+      labels = label_percent_100plus,
+      option = ifelse(to_compare == "free_fastest", "cividis", "inferno"),
+      direction = ifelse(to_compare == "free_fastest", 1, -1)
+    ) +
+    scale_x_continuous(
+      name = "Travel time threshold",
+      breaks = c(0, 30, 60, 90)
+    ) +
+    scale_y_continuous(
+      name = "Absolute monetary cost threshold (BRL)",
+      breaks = c(0, 5, 10, 15)
+    ) +
+    heatmap_theme +
+    theme(axis.title.y = element_blank())
+  
+  # remove access_diff object to reduce plot object size
+  rm(access_diff)
+  
+  p <- cowplot::plot_grid(
+    distribution,
+    difference,
+    nrow = 1,
+    rel_widths = c(1.6, 1)
+  )
   
   p
 }
@@ -458,4 +507,10 @@ create_frontier_plot <- function(frontier, routing_dir, od_points) {
     theme(panel.grid = element_blank(), axis.line = element_line())
   
   p
+}
+
+label_percent_100plus <- function(x) {
+  lab <- scales::label_percent()(x)
+  lab <- sub("100%", "100%+", lab)
+  return(lab)
 }

@@ -1,8 +1,10 @@
 name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
-.Random.seed|object|36ec9a3273320df6|||||||||||||||
+.Random.seed|object|6f2842e239e2272d|||||||||||||||
 absolute_accessibility|stem|374e1b7ec80ea865|93a45016a9fd82b6|dd2a2a0437fcfc65|2005063304||t19506.5569675926s|60ab5a6cd716bd6f|8683947|rds|local|vector|||228.7||
 absolute_heatmap|stem|0a39b73571e4addf|f1f8a18e6133367b|f32e6dca9a62d808|833495028||t19562.8745486111s|8e97fc300e5afc3f|1566254|rds|local|vector|||19.2||
-absolute_map|stem|a7f067d31c2d80d3|8624edd6d7f285ad|2e2e961d5267a9ef|177493921||t19563.6062268519s|f4f36360183c5860|990366|rds|local|vector|||2.48||
+absolute_heatmap_fastest_cost|stem|0549958ee89f5c91|f14ebea28c86a890|e0ab9fb756773709|580597403||t19628.6759777459s|685344c2322b56e8|589902|rds|local|vector|||16.1||
+absolute_heatmap_no_cost|stem|1e25850d63cfeda9|d274d69e93b9939b|e0ab9fb756773709|-1915303569||t19628.6761447765s|ac5d8ce4d0a74fa4|519324|rds|local|vector|||13.81||
+absolute_map|stem|819606c4719b024d|8624edd6d7f285ad|6faca4292de227d2|177493921||t19627.9126194868s|fbc4a7764d0d0706|8527905|rds|local|vector|||6.55||
 adjust_grid_income|function|89260a05690e8691|||||||||||||||
 adjusted_income|stem|8afc2859349e4b05|38e5eff64f6163a4|aed98d5876785c15|-163073318||t19480.8744560185s|36e2de1a28276a49|16594|rds|local|vector|||0.6||
 affordability_accessibility|stem|037023e27f762894|a7b9c673c880da2e|dd2a2a0437fcfc65|-1835169538||t19506.55875s|530f1a59321b4bd2|5269206|rds|local|vector|||143.75||
@@ -13,8 +15,8 @@ calculate_accessibility|function|4b85db15221c5087|||||||||||||||
 calculate_affordability_frontier|function|98b2886ac8204903|||||||||||||||
 calculate_frontier|function|67d3b39394b3f7c9|||||||||||||||
 calculate_pareto_frontier|function|40d26e2248d2ec70|||||||||||||||
-create_absolute_heatmap|function|3f6195e6ad8ad22d|||||||||||||||
-create_absolute_map|function|18196223728ea5d0|||||||||||||||
+create_absolute_heatmap|function|3c7024ee26ff202a|||||||||||||||
+create_absolute_map|function|a3f5c7088cdd9a0a|||||||||||||||
 create_afford_per_group_heatmap|function|ac179b83b33aadeb|||||||||||||||
 create_affordability_heatmap|function|be8194d644f8c203|||||||||||||||
 create_frontier_plot|function|dc1d3262977a7324|||||||||||||||
@@ -27,9 +29,12 @@ generate_possible_fare_values|function|84d163ea2295b17e|||||||||||||||
 gtfs_fetranspor_url|stem|65a6e9f1c9c2b14c|8928f27173de9135|ef46db3751d8e999|-1985454759|https://github.com/ipeaGIT/pareto_importance_paper/releases/download/data/gtfs_fetranspor.zip|t19480.6785317923s||0|url|local|vector|||0||
 gtfs_supervia_url|stem|f8b84ba9eb1f7676|71868f31523af104|ef46db3751d8e999|-1314782493|https://github.com/ipeaGIT/pareto_importance_paper/releases/download/data/gtfs_supervia.zip|t19480.6785388423s||0|url|local|vector|||0||
 heatmap_theme|stem|6ffb21ec3aa011f6|be3e07a68ca93d39|41b2e29472b1c4a3|1881693773||t19562.8557291667s|1ce9b7effb92356e|1403|rds|local|vector|||0.02||
+label_percent_100plus|function|749d1649f54227d7|||||||||||||||
 od_points|stem|c295b8fa561cbd0e|b71c8f70fd035114|3a477832f90d3acb|499515060||t19479.8233449074s|263f997d66a97545|23732|rds|local|vector|||0.68||
 paper_absolute_heatmap|stem|1af693b5b2fb0d8a|523fd982c3a4bc23|f82d8e03add9b6e5|97515486|figures/paper_absolute_heatmap.png|t19562.8745601852s|86205997db0e6ea9|73304|file|local|vector|||0.99||
-paper_absolute_map|stem|9cc3ba6765e41ae2|d915b99b64efdd55|54e34e3f872f4bc7|2036768823|figures/paper_absolute_map.png|t19563.6081018519s|b9d3d2bd621e67d3|293468|file|local|vector|||2.93||
+paper_absolute_heatmap_fastest_cost|stem|2e4cd0f044d2562d|8b6123390637bf72|e97087f9785a4ba6|1159462373|figures/paper_absolute_heatmap_fastest_cost.png|t19628.6761534599s|24bc624dd49cba5a|38581|file|local|vector|||0.57||
+paper_absolute_heatmap_no_cost|stem|38491ed7e0f5bcee|b30f84a14d62c658|f77a4f1cdaf0eadf|1150893840|figures/paper_absolute_heatmap_no_cost.png|t19628.6761605673s|5b882641f5dc6fe8|35354|file|local|vector|||0.55||
+paper_absolute_map|stem|fbbdafe05bc331b7|d915b99b64efdd55|cb3eb862c8af0601|2036768823|figures/paper_absolute_map.png|t19628.6761869201s|ad443b3c8e7cd577|280564|file|local|vector|||1.7||
 paper_affordability_heatmap|stem|26981820385f00a7|07a2c33206c4ab3a|947fd347e6c2a7ad|-1655346241|figures/paper_affordability_heatmap.png|t19562.8766550926s|1457c44c9602316c|93541|file|local|vector|||0.93||
 paper_affordability_per_group_heatmap|stem|3ef28706e81ee946|10b7b2f37095c469|cc42526ca453b065|56176530|figures/paper_affordability_per_group_heatmap.png|t19562.8766666667s|c2bb1309d7f9323f|115782|file|local|vector|||1.27||
 paper_pareto_frontier_plot|stem|326c1e53c6ae0e1b|5a871184de04d016|61dbe8487a57aefd|701364289|figures/paper_pareto_frontier_plot.png|t19621.8370168128s|357171cebd8764cc|17048|file|local|vector|||0.46||

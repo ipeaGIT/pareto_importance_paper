@@ -88,8 +88,22 @@ list(
   ),
   tar_target(heatmap_theme, create_heatmap_theme()),
   tar_target(
-    absolute_heatmap,
-    create_absolute_heatmap(absolute_accessibility, rio_grid, heatmap_theme)
+    absolute_heatmap_no_cost,
+    create_absolute_heatmap(
+      absolute_accessibility,
+      rio_grid,
+      heatmap_theme,
+      "free_fastest"
+    )
+  ),
+  tar_target(
+    absolute_heatmap_fastest_cost,
+    create_absolute_heatmap(
+      absolute_accessibility,
+      rio_grid,
+      heatmap_theme,
+      "fastest_cost"
+    )
   ),
   tar_target(
     affordability_heatmap,
@@ -133,13 +147,24 @@ list(
     format = "file"
   ),
   tar_target(
-    paper_absolute_heatmap,
+    paper_absolute_heatmap_no_cost,
     ggsave(
-      file.path(figures_dir, "paper_absolute_heatmap.png"),
-      plot = absolute_heatmap,
+      file.path(figures_dir, "paper_absolute_heatmap_no_cost.png"),
+      plot = absolute_heatmap_no_cost,
       units = "cm",
       width = 24,
-      height = 18
+      height = 9
+    ),
+    format = "file"
+  ),
+  tar_target(
+    paper_absolute_heatmap_fastest_cost,
+    ggsave(
+      file.path(figures_dir, "paper_absolute_heatmap_fastest_cost.png"),
+      plot = absolute_heatmap_fastest_cost,
+      units = "cm",
+      width = 24,
+      height = 9
     ),
     format = "file"
   ),
