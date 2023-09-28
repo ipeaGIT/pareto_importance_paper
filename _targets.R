@@ -106,19 +106,39 @@ list(
     )
   ),
   tar_target(
-    affordability_heatmap,
+    affordability_heatmap_no_cost,
     create_affordability_heatmap(
       affordability_accessibility,
       rio_grid,
-      heatmap_theme
+      heatmap_theme,
+      "free_fastest"
     )
   ),
   tar_target(
-    affordability_per_group_heatmap,
+    affordability_heatmap_fastest_cost,
+    create_affordability_heatmap(
+      affordability_accessibility,
+      rio_grid,
+      heatmap_theme,
+      "fastest_cost"
+    )
+  ),
+  tar_target(
+    affordability_per_group_heatmap_no_cost,
     create_afford_per_group_heatmap(
       affordability_accessibility,
       rio_grid,
-      heatmap_theme
+      heatmap_theme,
+      "free_fastest"
+    )
+  ),
+  tar_target(
+    affordability_per_group_heatmap_fastest_cost,
+    create_afford_per_group_heatmap(
+      affordability_accessibility,
+      rio_grid,
+      heatmap_theme,
+      "fastest_cost"
     )
   ),
   tar_target(
@@ -169,24 +189,46 @@ list(
     format = "file"
   ),
   tar_target(
-    paper_affordability_heatmap,
+    paper_affordability_heatmap_no_cost,
     ggsave(
-      file.path(figures_dir, "paper_affordability_heatmap.png"),
-      plot = affordability_heatmap,
+      file.path(figures_dir, "paper_affordability_heatmap_no_cost.png"),
+      plot = affordability_heatmap_no_cost,
       units = "cm",
       width = 24,
-      height = 18
+      height = 9
     ),
     format = "file"
   ),
   tar_target(
-    paper_affordability_per_group_heatmap,
+    paper_affordability_heatmap_fastest_cost,
     ggsave(
-      file.path(figures_dir, "paper_affordability_per_group_heatmap.png"),
-      plot = affordability_per_group_heatmap,
+      file.path(figures_dir, "paper_affordability_heatmap_fastest_cost.png"),
+      plot = affordability_heatmap_fastest_cost,
       units = "cm",
       width = 24,
-      height = 25 
+      height = 9
+    ),
+    format = "file"
+  ),
+  tar_target(
+    paper_affordability_per_group_heatmap_no_cost,
+    ggsave(
+      file.path(figures_dir, "paper_affordability_per_group_heatmap_no_cost.png"),
+      plot = affordability_per_group_heatmap_no_cost,
+      units = "cm",
+      width = 24,
+      height = 13
+    ),
+    format = "file"
+  ),
+  tar_target(
+    paper_affordability_per_group_heatmap_fastest_cost,
+    ggsave(
+      file.path(figures_dir, "paper_affordability_per_group_heatmap_fastest_cost.png"),
+      plot = affordability_per_group_heatmap_fastest_cost,
+      units = "cm",
+      width = 24,
+      height = 13
     ),
     format = "file"
   ),
